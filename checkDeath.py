@@ -9,20 +9,20 @@ from riotwatcher import LolWatcher, ApiError
 lol_watcher = LolWatcher('RGAPI-19397e0d-11ce-4d0d-8056-cd0d3f61c613')
 my_region = 'na1'
 
-# Function to grab a screenshot, and check if the average RGB is in range of greyscale
-def greyscaleCheck():
-    screenshot = ImageGrab.grab(bbox=(500, 500, 900, 750))
+# Function to grab a screenshot, and check if the area of the screen matches the black from the portrait bubble
+def portraitCheck():
+    screenshot = ImageGrab.grab(bbox=(1637, 705, 1650, 715))
 
     numpixels = screenshot.size[0] * screenshot.size[1]
     colors = screenshot.getcolors(numpixels)
     sumRGB = [(x[0] * x[1][0], x[0] * x[1][1], x[0] * x[1][2]) for x in colors]
     avg = tuple([sum(x) / numpixels for x in zip(*sumRGB)])
 
-    # Greyscale range based on tested values
-    grey_upper = (57, 57, 56)
-    grey_lower = (0, 0, 0)
+    # Black bubble above portrait check
+    black = (1, 1, 1)
 
-    if avg >= grey_lower and avg <= grey_upper:
+
+    if avg <= black:
         return True
 
     else:
@@ -52,9 +52,7 @@ else:
             break
         else:
             time.sleep(2) # Delay to not hit request ceiling for Riot API
-            if greyscaleCheck():
+            if portraitCheck():
                 print('Shock that bitch!')
             else:
                 print('The player is alive!')
-
-
