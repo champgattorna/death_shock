@@ -4,9 +4,10 @@
 import time
 from PIL import Image, ImageGrab
 from riotwatcher import LolWatcher, ApiError
+import serial
 
 # Riot API Setup
-lol_watcher = LolWatcher('RGAPI-84433eaf-1dd3-4ab1-b310-4d1ff499eae2')
+lol_watcher = LolWatcher('RGAPI-47b7ef2c-7eb4-4539-aeb7-937e3bfd6fb3')
 my_region = 'na1'
 
 # Function to grab a screenshot, and check if the area of the screen matches the black from the portrait bubble
@@ -44,6 +45,8 @@ else:
     active_gameId = in_game['gameId']
 
 alreadyShocked = False
+# Creates serial connection to the arduino uno
+arduino = serial.Serial('COM1', 115200, timeout=.1)
 
 # Begins loop for screenshots and math
 while active_gameId != None:
@@ -56,9 +59,11 @@ while active_gameId != None:
         time.sleep(2) # Delay to not hit request ceiling for Riot API
         if portraitCheck() and not alreadyShocked:
             print('Shock that bitch!')
+            arduino.write(1)
             alreadyShocked = True
         else:
             print('The player is alive!')
+            #arduino.write("Alive")
         # Makes sure that the player is only shocked once
         while alreadyShocked == True:
             if portraitCheck() == False:
