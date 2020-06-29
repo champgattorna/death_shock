@@ -48,5 +48,7 @@ Credits for Help!
 _________________
 
 Chris M - Assisted with pseudocode for only shocking once instead of shocking for entire death duration (https://github.com/chrismelton32)
+
 Nicholas L - Provided an Arduino Mega and Nano for testing as well as other extremely useful supplies
+
 Khalid D - Assisted with physical setup of Arduino, relay and TENS unit over a Discord call. Also helped with the Arduino code (https://github.com/KhalidD98)
