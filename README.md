@@ -1,3 +1,6 @@
+A Program that Incentivises Not Dying in League of Legends
+__________________________________________________________
+
 This was a project I decided to grind out during the COVID-19 quarantine. Inspired by Michael Reeves' "A Robot Shoots Me When I Get Shot in Fortnite"
 (https://www.youtube.com/watch?v=D75ZuaSR8nQ&), I decided I wanted to create a program that shocks you when you die in League of Legends!
 
