@@ -43,3 +43,10 @@ I really enjoyed putting this together. I learned a ton about Python and it's in
 assistance from a couple of good friends on some parts of this. Without them, I don't think I would have been able to do this as fast as I did (about half a week) and I'm
 grateful that they were willing to take time out of their day to help. I am looking forward to doing more projects like this and I hope this encourages inexperienced programmers
 to dive into a project idea headfirst and learn as you go.
+
+Credits for Help!
+_________________
+
+Chris M - Assisted with pseudocode for only shocking once instead of shocking for entire death duration (https://github.com/chrismelton32)
+Nicholas L - Provided an Arduino Mega and Nano for testing as well as other extremely useful supplies
+Khalid D - Assisted with physical setup of Arduino, relay and TENS unit over a Discord call. Also helped with the Arduino code (https://github.com/KhalidD98)
