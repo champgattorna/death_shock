@@ -1,4 +1,4 @@
-A Program that Incentivises Not Dying in League of Legends
+A Robot that Incentivises Not Dying in League of Legends
 __________________________________________________________
 
 This was a project I decided to grind out during the COVID-19 quarantine. Inspired by Michael Reeves' "A Robot Shoots Me When I Get Shot in Fortnite"
