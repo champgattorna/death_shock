@@ -4,34 +4,30 @@
 
 # Begin imports
 import time
-from PIL import Image, ImageGrab
+from PIL import Image, ImageGrab, ImageOps
 from riotwatcher import LolWatcher, ApiError
 import serial
-import ocrspace
+import pytesseract
 
 # Riot API Setup
 lol_watcher = LolWatcher('RGAPI-8fc4e037-5afd-465e-9c86-795fdf4e1439')
 my_region = 'na1'
 
-# Text detection (OCR Space) API Setup
-api = ocrspace.API()
-
 # Function to grab a screenshot of the healthbar, and parse the image for text and determine if health has hit 0
 def healthCheck():
-    screenshot = ImageGrab.grab(bbox=(800, 1037, 1000, 1055))
+    screenshot = ImageGrab.grab(bbox=(800, 1037, 905, 1055))
     screenshot.save("screenshot.png", "PNG")
 
     # Saves as a screenshot, each time this function is run, the screenshot will overwrite
     # This is done mostly so it doesn't create hundreds of images
-    healthbar = 'screenshot.png'
-    healthCheck = api.ocr_file(healthbar)
+    healthbar = Image.open("screenshot.png")
+    greyscale = ImageOps.grayscale(healthbar)
+    greyscale.show()
+    healthCheck = pytesseract.image_to_string(greyscale)
+    print(healthCheck)
+    
 
-    # The health bar is written as "Current Health / Maximum Health"
-    # This partitions the text so we only read the current health
-    realHealth = healthCheck.partition("/")[0]
-    print(realHealth)
-
-    if int(realHealth) == 0:
+    if int(healthCheck) == 0:
         return True
     else:
         return False
@@ -57,7 +53,7 @@ else:
 alreadyShocked = False
 # Creates serial connection to the arduino uno,
 # COM may need to change dependent on USB port the board is plugged into
-#arduino = serial.Serial('COM4', 9600, timeout=.1)
+arduino = serial.Serial('COM4', 9600, timeout=.1)
 
 # Start of main loop to call screenshot/math function and send data to arduino
 while active_gameId != None:
@@ -72,8 +68,8 @@ while active_gameId != None:
         if healthCheck() and not alreadyShocked:
             isDead = 1
             print('You Died!')
-            #isDeadString = str(isDead)
-            #arduino.write(isDeadString.encode('ascii'))
+            isDeadString = str(isDead)
+            arduino.write(isDeadString.encode('ascii'))
             alreadyShocked = True
         # Makes sure that the player is only shocked once
         while alreadyShocked == True:
