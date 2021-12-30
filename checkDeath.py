@@ -1,35 +1,42 @@
 # File to check if the player has died during a game of League of Legends
 # If true, send a signal to the arduino to shock the player once they're dead
-# Christian Hamp-Gattorna 2020
+# Christian Hamp-Gattorna 2021
 
 # Begin imports
 import time
 from PIL import Image, ImageGrab
 from riotwatcher import LolWatcher, ApiError
 import serial
+import ocrspace
 
 # Riot API Setup
-lol_watcher = LolWatcher('RGAPI-e5f0b87c-45a1-4fb7-838d-b0a4fc264be2')
+lol_watcher = LolWatcher('RGAPI-8fc4e037-5afd-465e-9c86-795fdf4e1439')
 my_region = 'na1'
 
-# Function to grab a screenshot, and check if the area of the screen matches the black from the portrait ult bubble
-def portraitCheck():
-    screenshot = ImageGrab.grab(bbox=(1637, 705, 1650, 715))
+# Text detection (OCR Space) API Setup
+api = ocrspace.API()
 
-    # Takes average color. This is definitely overkill but I had it in
-    # previous tests for other screenshot areas & works for this so I'm keeping it
-    numpixels = screenshot.size[0] * screenshot.size[1]
-    colors = screenshot.getcolors(numpixels)
-    sumRGB = [(x[0] * x[1][0], x[0] * x[1][1], x[0] * x[1][2]) for x in colors]
-    avg = tuple([sum(x) / numpixels for x in zip(*sumRGB)])
+# Function to grab a screenshot of the healthbar, and parse the image for text and determine if health has hit 0
+def healthCheck():
+    screenshot = ImageGrab.grab(bbox=(800, 1037, 1000, 1055))
+    screenshot.save("screenshot.png", "PNG")
 
-    # Black bubble above portrait check
-    black = (1, 1, 1)
+    # Saves as a screenshot, each time this function is run, the screenshot will overwrite
+    # This is done mostly so it doesn't create hundreds of images
+    healthbar = 'screenshot.png'
+    healthCheck = api.ocr_file(healthbar)
 
-    if avg <= black:
+    # The health bar is written as "Current Health / Maximum Health"
+    # This partitions the text so we only read the current health
+    realHealth = healthCheck.partition("/")[0]
+    print(realHealth)
+
+    if int(realHealth) == 0:
         return True
     else:
         return False
+
+
 
 # Prompts user for their summoner name
 summoner = input('Enter a valid summoner name: ')
@@ -50,7 +57,7 @@ else:
 alreadyShocked = False
 # Creates serial connection to the arduino uno,
 # COM may need to change dependent on USB port the board is plugged into
-arduino = serial.Serial('COM7', 9600, timeout=.1)
+#arduino = serial.Serial('COM4', 9600, timeout=.1)
 
 # Start of main loop to call screenshot/math function and send data to arduino
 while active_gameId != None:
@@ -62,14 +69,15 @@ while active_gameId != None:
         break
     else:
         time.sleep(2) # Delay to not hit request ceiling for Riot API
-        if portraitCheck() and not alreadyShocked:
+        if healthCheck() and not alreadyShocked:
             isDead = 1
-            isDeadString = str(isDead)
-            arduino.write(isDeadString.encode('ascii'))
+            print('You Died!')
+            #isDeadString = str(isDead)
+            #arduino.write(isDeadString.encode('ascii'))
             alreadyShocked = True
         # Makes sure that the player is only shocked once
         while alreadyShocked == True:
-            if portraitCheck() == False:
+            if healthCheck() == False:
                 alreadyShocked = False
             else:
                 break
