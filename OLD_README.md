@@ -7,8 +7,10 @@ This was a project I decided to grind out during the COVID-19 quarantine. Inspir
 The way I have it setup is I wrote some Python code that essentially does the following:
 
 1: Asks for a summoner name to check if they are in game
+
 2: Takes a screenshot of a certain portion of the screen every 2 seconds
 3: Compare that screenshot to the color black
+
 4: If that comes back true, send a signal to the Arduino to shock the player
 
 To check if a summoner is in game, I used RiotWatcher (https://github.com/pseudonym117/Riot-Watcher) which is a wrapper for the Riot Games API to simplify API calls.
